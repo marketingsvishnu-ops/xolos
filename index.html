@@ -1,0 +1,547 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CricketZone | Live Cricket Scores & News</title>
+<style>
+:root {
+  --green: #087443;
+  --dark: #101c19;
+  --light: #f3f6f4;
+  --muted: #738078;
+  --border: #e3e9e5;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--light);
+  color: var(--dark);
+}
+a { color: inherit; text-decoration: none; }
+.topbar {
+  background: #101c19;
+  color: white;
+  padding: 10px 6%;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+header {
+  background: white;
+  padding: 18px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-size: 25px; font-weight: 900; letter-spacing: -1px; }
+.logo span { color: var(--green); }
+nav { display: flex; gap: 22px; flex-wrap: wrap; }
+nav a { font-size: 14px; font-weight: bold; }
+nav a:hover { color: var(--green); }
+.live-tag {
+  background: #e5f7ed;
+  color: #087443;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.ticker {
+  background: var(--green);
+  color: white;
+  padding: 11px 6%;
+  font-size: 13px;
+}
+.ticker strong { margin-right: 12px; }
+.container { width: 88%; max-width: 1250px; margin: 28px auto; }
+.section-title {
+  font-size: 21px;
+  margin: 0 0 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-title small { color: var(--green); font-size: 12px; }
+.match-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 19px;
+  min-width: 0;
+}
+.match-meta {
+  color: var(--muted);
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.live-dot { color: #d73535; font-weight: bold; }
+.teams { margin: 22px 0 14px; }
+.team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 13px 0;
+  font-weight: bold;
+}
+.flag { margin-right: 9px; }
+.score { font-size: 19px; }
+.overs { font-size: 11px; color: var(--muted); font-weight: normal; }
+.match-status {
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+  color: var(--green);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.btn {
+  display: inline-block;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+}
+.btn:hover { background: #065b35; }
+.main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+  gap: 24px;
+  margin-top: 35px;
+}
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+.tab {
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+}
+.tab.active { background: var(--green); color: white; }
+.commentary-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ball {
+  background: #e6f5ec;
+  color: var(--green);
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 7px 4px;
+  text-align: center;
+  height: fit-content;
+}
+.commentary-item p { margin: 5px 0 0; color: #5d6962; }
+.feature {
+  background: #102b21;
+  color: white;
+  padding: 28px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+.feature .eyebrow {
+  color: #8ee0b0;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.feature h2 { font-size: 28px; line-height: 1.25; margin: 14px 0; }
+.feature p { color: #d0ddd5; font-size: 13px; line-height: 1.7; }
+.news-item {
+  display: grid;
+  grid-template-columns: 94px 1fr;
+  gap: 13px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+.news-thumb {
+  background: linear-gradient(135deg, #174d35, #8bb59b);
+  border-radius: 8px;
+  min-height: 82px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 30px;
+}
+.news-item h3 { font-size: 14px; line-height: 1.5; margin: 0 0 7px; }
+.news-item p { font-size: 11px; color: var(--muted); margin: 0; }
+.news-item[hidden] { display: none; }
+.news-filter {
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: 11px;
+  border-radius: 7px;
+  margin-bottom: 12px;
+  background: white;
+}
+.quick-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.quick-links a {
+  padding: 9px 12px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+}
+footer {
+  background: #101c19;
+  color: white;
+  margin-top: 50px;
+  padding: 30px 6%;
+  font-size: 12px;
+  line-height: 1.8;
+}
+footer p { color: #b5c3ba; }
+@media (max-width: 900px) {
+  .match-list { grid-template-columns: repeat(2, 1fr); }
+  .main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  header { align-items: flex-start; flex-direction: column; }
+  nav { gap: 14px; }
+  .container { width: 92%; }
+  .match-list { grid-template-columns: 1fr; }
+  .feature h2 { font-size: 23px; }
+  .topbar { padding: 10px 4%; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>YOUR DAILY CRICKET DESTINATION</span>
+  <span id="today"></span>
+</div>
+
+<header>
+  <a href="#" class="logo">CRICKET<span>ZONE</span></a>
+  <nav>
+    <a href="#scores">Live Scores</a>
+    <a href="#commentary">Live Blog</a>
+    <a href="#news">Cricket News</a>
+    <a href="#matches">Fixtures</a>
+  </nav>
+  <span class="live-tag">● MATCH CENTRE</span>
+</header>
+
+<div class="ticker">
+  <strong>CRICKET UPDATE</strong>
+  <span>Scores, match analysis, team updates and the latest cricket stories — all in one place.</span>
+</div>
+
+<main class="container">
+
+  <section id="scores">
+    <h1 class="section-title">
+      Live Cricket Scores
+      <small>DEMO SCORES</small>
+    </h1>
+
+    <div class="match-list" id="matchList"></div>
+  </section>
+
+  <div class="main-grid">
+    <section id="commentary">
+      <h2 class="section-title">Live Match Blog</h2>
+      <div class="card">
+        <div class="match-meta">
+          <span id="blogMatch">IND vs AUS · T20</span>
+          <span class="live-dot">● DEMO</span>
+        </div>
+
+        <h3 id="blogTitle">Ball-by-ball commentary</h3>
+        <p style="font-size:12px;color:#738078;line-height:1.6">
+          Sample commentary for layout testing. Connect a live cricket API
+          to receive real match events.
+        </p>
+
+        <div class="tabs">
+          <button class="tab active" data-filter="all">All Updates</button>
+          <button class="tab" data-filter="wicket">Wickets</button>
+          <button class="tab" data-filter="boundary">Boundaries</button>
+        </div>
+
+        <div id="commentaryFeed" aria-live="polite"></div>
+        <button class="btn" id="addUpdate">Add Sample Update</button>
+      </div>
+    </section>
+
+    <aside>
+      <article class="feature">
+        <div class="eyebrow">FEATURED STORY</div>
+        <h2>Every Ball Has a Story</h2>
+        <p>
+          Explore match-day coverage, cricket analysis, player performances
+          and the moments that matter to fans.
+        </p>
+        <a href="#news" class="btn">Explore Cricket News →</a>
+      </article>
+
+      <section id="news">
+        <h2 class="section-title">Latest Cricket News</h2>
+
+        <input
+          class="news-filter"
+          type="search"
+          id="newsSearch"
+          placeholder="Search cricket news..."
+          aria-label="Search cricket news"
+        />
+
+        <div id="newsList">
+          <article class="news-item" data-search="india new zealand odi squad">
+            <div class="news-thumb">🏏</div>
+            <div>
+              <h3>New Zealand announce squad plans ahead of India ODI series</h3>
+              <p>TEAM NEWS · SAMPLE HEADLINE</p>
+            </div>
+          </article>
+
+          <article class="news-item" data-search="women cricket t20 tournament">
+            <div class="news-thumb">🏆</div>
+            <div>
+              <h3>Women's T20 cricket takes centre stage in Australia</h3>
+              <p>WOMEN'S CRICKET · SAMPLE HEADLINE</p>
+            </div>
+          </article>
+
+          <article class="news-item" data-search="test cricket australia south africa">
+            <div class="news-thumb">🌍</div>
+            <div>
+              <h3>Test cricket: Australia and South Africa battle for control</h3>
+              <p>TEST CRICKET · SAMPLE HEADLINE</p>
+            </div>
+          </article>
+
+          <article class="news-item" data-search="cricket player performance analysis">
+            <div class="news-thumb">📊</div>
+            <div>
+              <h3>Five player performances to watch this cricket season</h3>
+              <p>ANALYSIS · SAMPLE STORY</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section id="matches" style="margin-top:35px">
+    <h2 class="section-title">Cricket Resources</h2>
+    <div class="quick-links">
+      <a href="https://www.icc-cricket.com/" target="_blank" rel="noopener">ICC Official</a>
+      <a href="https://www.espncricinfo.com/" target="_blank" rel="noopener">ESPNcricinfo</a>
+      <a href="https://www.cricbuzz.com/" target="_blank" rel="noopener">Cricbuzz</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="logo">CRICKET<span>ZONE</span></div>
+  <p>
+    Your cricket blog for scores, commentary, fixtures and news.
+    Demo scores and commentary are illustrative and are not live data.
+  </p>
+  <p>© <span id="year"></span> CricketZone. All rights reserved.</p>
+</footer>
+
+<script>
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString(undefined, {
+    day: "numeric", month: "short", year: "numeric"
+  });
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Demonstration data only. Replace with a cricket API for live scores.
+const matches = [
+  {
+    type: "T20 INTERNATIONAL",
+    status: "DEMO",
+    team1: "India",
+    flag1: "🇮🇳",
+    score1: "178/5",
+    overs1: "20.0 overs",
+    team2: "Australia",
+    flag2: "🇦🇺",
+    score2: "142/4",
+    overs2: "16.0 overs",
+    result: "Illustrative score — not a live match"
+  },
+  {
+    type: "ONE DAY INTERNATIONAL",
+    status: "UPCOMING",
+    team1: "England",
+    flag1: "🏴",
+    score1: "—",
+    overs1: "Yet to bat",
+    team2: "Pakistan",
+    flag2: "🇵🇰",
+    score2: "—",
+    overs2: "Yet to bat",
+    result: "Example upcoming fixture"
+  },
+  {
+    type: "TEST MATCH",
+    status: "DEMO",
+    team1: "South Africa",
+    flag1: "🇿🇦",
+    score1: "285",
+    overs1: "1st innings",
+    team2: "Australia",
+    flag2: "🇦🇺",
+    score2: "210/5",
+    overs2: "2nd innings",
+    result: "Illustrative score — not a live match"
+  }
+];
+
+const matchList = document.getElementById("matchList");
+
+matches.forEach(match => {
+  const card = document.createElement("article");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="match-meta">
+      <span>${match.type}</span>
+      <span>${match.status}</span>
+    </div>
+    <div class="teams">
+      <div class="team">
+        <span><span class="flag">${match.flag1}</span>${match.team1}</span>
+        <span class="score">${match.score1}</span>
+      </div>
+      <div class="team">
+        <span><span class="flag">${match.flag2}</span>${match.team2}</span>
+        <span class="score">${match.score2}</span>
+      </div>
+      <div class="match-meta">
+        <span>${match.overs1} / ${match.overs2}</span>
+      </div>
+    </div>
+    <div class="match-status">${match.result}</div>
+  `;
+  matchList.appendChild(card);
+});
+
+let updates = [
+  {
+    over: "19.4",
+    type: "boundary",
+    title: "FOUR RUNS!",
+    text: "A well-timed shot races through the gap to the boundary. Sample commentary."
+  },
+  {
+    over: "19.3",
+    type: "all",
+    title: "Two runs",
+    text: "Good running between the wickets brings the batters back for two."
+  },
+  {
+    over: "19.2",
+    type: "wicket",
+    title: "WICKET!",
+    text: "The batter departs after a big delivery. Illustrative event only."
+  },
+  {
+    over: "19.1",
+    type: "boundary",
+    title: "SIX!",
+    text: "A towering hit clears the rope. Sample commentary, not a live event."
+  }
+];
+
+const feed = document.getElementById("commentaryFeed");
+let currentFilter = "all";
+
+function renderUpdates() {
+  feed.replaceChildren();
+
+  const visible = updates.filter(item =>
+    currentFilter === "all" ||
+    item.type === currentFilter
+  );
+
+  if (!visible.length) {
+    feed.textContent = "No updates in this category yet.";
+    return;
+  }
+
+  visible.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "commentary-item";
+
+    const ball = document.createElement("div");
+    ball.className = "ball";
+    ball.textContent = item.over;
+
+    const content = document.createElement("div");
+    const heading = document.createElement("strong");
+    heading.textContent = item.title;
+
+    const paragraph = document.createElement("p");
+    paragraph.textContent = item.text;
+
+    content.append(heading, paragraph);
+    row.append(ball, content);
+    feed.appendChild(row);
+  });
+}
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(tab =>
+      tab.classList.remove("active")
+    );
+    button.classList.add("active");
+    currentFilter = button.dataset.filter;
+    renderUpdates();
+  });
+});
+
+document.getElementById("addUpdate").addEventListener("click", () => {
+  updates.unshift({
+    over: "NEW",
+    type: "all",
+    title: "Sample match update",
+    text: "This is a locally generated demonstration update."
+  });
+  renderUpdates();
+});
+
+document.getElementById("newsSearch").addEventListener("input", event => {
+  const query = event.target.value.toLowerCase().trim();
+
+  document.querySelectorAll(".news-item").forEach(item => {
+    const searchableText =
+      item.innerText + " " + item.dataset.search;
+
+    item.hidden = !searchableText.toLowerCase().includes(query);
+  });
+});
+
+renderUpdates();
+</script>
+</body>
+</html>
